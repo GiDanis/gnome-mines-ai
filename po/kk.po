@@ -1,0 +1,423 @@
+# Kazakh translation for gnome-games.
+# Copyright (C) 2010 gnome-games's COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-games package.
+# Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2010-2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-games master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-mines/issues\n"
+"POT-Creation-Date: 2026-01-16 00:38+0000\n"
+"PO-Revision-Date: 2026-01-26 20:05+0500\n"
+"Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>\n"
+"Language-Team: Kazakh <kk_KZ@googlegroups.com>\n"
+"Language: kk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.8\n"
+
+#: data/org.gnome.Mines.metainfo.xml.in:8 data/org.gnome.Mines.desktop.in:2
+#: src/interface.ui:44 src/gnome-mines.vala:130 src/gnome-mines.vala:741
+msgid "Mines"
+msgstr "Миналар"
+
+#: data/org.gnome.Mines.metainfo.xml.in:9 data/org.gnome.Mines.desktop.in:3
+msgid "Clear hidden mines from a minefield"
+msgstr "Миналар өрісінен жасырын миналарды тазарту"
+
+#: data/org.gnome.Mines.metainfo.xml.in:11
+msgid ""
+"Mines is a puzzle game where you search for hidden mines. Flag the spaces "
+"with mines as quickly as possible to make the board a safer place. You win "
+"the game when you’ve flagged every mine on the board. Be careful not to "
+"trigger one, or the game is over!"
+msgstr ""
+"Сапёр ойыны — жасырын миналарды іздейтін жұмбақ ойыны. Миналары бар бос "
+"орындарды тақтаны қауіпсіз қылу үшін тезірек белгілеңіз. Тақтадағы әрбір "
+"минаның жалаушасы болған кезде ойынды жеңіп шығасыз. Ешбір минаны "
+"белсендірмеңіз, өйткені ойын аяқталады!"
+
+#: data/org.gnome.Mines.metainfo.xml.in:17
+msgid ""
+"You can select the size of the field you want to play on at the start of the "
+"game. If you get stuck, you can ask for a hint: there’s a time penalty, but "
+"that’s better than hitting a mine!"
+msgstr ""
+"Ойынның басында ойналатын өрістің өлшемін таңдауға болады. Егер тұрып "
+"қалсаңыз, тұспал сұрауға болады: бұл уақыт кідірісін қосады, бірақ бұл "
+"минаға тап болудан жақсы!"
+
+#: data/org.gnome.Mines.metainfo.xml.in:120
+msgid "Robert Roth"
+msgstr "Robert Roth"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.Mines.desktop.in:11
+msgid "minesweeper;"
+msgstr "minesweeper;миналар;сапер;сапёр;"
+
+#: data/org.gnome.Mines.desktop.in:17
+msgid "Small board"
+msgstr "Кішкентай тақта"
+
+#: data/org.gnome.Mines.desktop.in:21
+msgid "Medium board"
+msgstr "Орташа тақта"
+
+#: data/org.gnome.Mines.desktop.in:25
+msgid "Big board"
+msgstr "Үлкен тақта"
+
+#: data/org.gnome.Mines.gschema.xml:5
+msgid "The theme to use"
+msgstr "Қолданатын тема"
+
+#: data/org.gnome.Mines.gschema.xml:6
+msgid "The title of the tile theme to use."
+msgstr "Қолданылатын плиткалар темасының атауы."
+
+#: data/org.gnome.Mines.gschema.xml:10
+msgid "Use the unknown flag"
+msgstr "Белгісіз жалаушасын қолдану"
+
+#: data/org.gnome.Mines.gschema.xml:11
+msgid "Set to true to be able to mark squares as unknown."
+msgstr ""
+"Плиткаларды белгісіз ретінде белгілеу мүмкіндігін іске қосу үшін \"true\" "
+"етіп орнатыңыз."
+
+#: data/org.gnome.Mines.gschema.xml:15
+msgid "Enable automatic placing of flags"
+msgstr "Жалаушаларды автоматты түрде орналастыруды іске қосу"
+
+#: data/org.gnome.Mines.gschema.xml:16
+msgid ""
+"Set to true to automatically flag squares as mined when enough squares are "
+"revealed"
+msgstr ""
+"Жеткілікті плитка саны ашылған кезде, плиткаларды мина ретіне автобелгілеу "
+"үшін \"true\" етіп орнатыңыз"
+
+#: data/org.gnome.Mines.gschema.xml:21
+msgid "Number of columns in a custom game"
+msgstr "Таңдауыңызша ойындағы бағандар саны"
+
+#: data/org.gnome.Mines.gschema.xml:26
+msgid "Number of rows in a custom game"
+msgstr "Таңдауыңызша ойындағы жолдар саны"
+
+#: data/org.gnome.Mines.gschema.xml:30
+msgid "The number of mines in a custom game"
+msgstr "Таңдауыңызша ойындағы миналар саны"
+
+#: data/org.gnome.Mines.gschema.xml:35
+msgid "Board size"
+msgstr "Тақта өлшемі"
+
+#: data/org.gnome.Mines.gschema.xml:36
+msgid "Size of the board (0-2 = small-large, 3 = custom)"
+msgstr "Тақта өлшемі (0-2 = кіші-үлкен, 3=таңдауыңызша)"
+
+#: data/org.gnome.Mines.gschema.xml:40
+msgid "Width of the window in pixels"
+msgstr "Терезе ені, пиксельмен"
+
+#: data/org.gnome.Mines.gschema.xml:44
+msgid "Height of the window in pixels"
+msgstr "Терезе биіктігі, пиксельмен"
+
+#: data/org.gnome.Mines.gschema.xml:48
+msgid "true if the window is maximized"
+msgstr "терезе максималды болса, мәні true болады"
+
+#: src/shortcuts-dialog.ui:7
+msgctxt "shortcut window"
+msgid "Window and game"
+msgstr "Терезе және ойын"
+
+#: src/shortcuts-dialog.ui:11
+msgctxt "shortcut window"
+msgid "Start a new game"
+msgstr "Жаңа ойынды бастау"
+
+#: src/shortcuts-dialog.ui:17
+msgctxt "shortcut window"
+msgid "Restart game with current settings"
+msgstr "Ойынды ағымдағы баптаулармен қайта іске қосу"
+
+#: src/shortcuts-dialog.ui:23
+msgctxt "shortcut window"
+msgid "Pause the game"
+msgstr "Ойынды аялдату"
+
+#: src/shortcuts-dialog.ui:29
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Көмекті көрсету"
+
+#: src/shortcuts-dialog.ui:35
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "Мәзірді ашу"
+
+#: src/shortcuts-dialog.ui:41
+msgctxt "shortcut window"
+msgid "Show Keyboard Shortcuts"
+msgstr "Пернетақта жарлықтарын көрсету"
+
+#: src/shortcuts-dialog.ui:47
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Шығу"
+
+#: src/shortcuts-dialog.ui:54
+msgctxt "shortcut window"
+msgid "Game size selection"
+msgstr "Ойын өлшемін таңдау"
+
+#: src/shortcuts-dialog.ui:58
+msgctxt "shortcut window"
+msgid "Game size: small"
+msgstr "Ойын өлшемі: шағын"
+
+#: src/shortcuts-dialog.ui:64
+msgctxt "shortcut window"
+msgid "Game size: medium"
+msgstr "Ойын өлшемі: орташа"
+
+#: src/shortcuts-dialog.ui:70
+msgctxt "shortcut window"
+msgid "Game size: large"
+msgstr "Ойын өлшемі: үлкен"
+
+#: src/shortcuts-dialog.ui:76
+msgctxt "shortcut window"
+msgid "Game size: custom"
+msgstr "Ойын өлшемі: таңдауыңызша"
+
+#: src/shortcuts-dialog.ui:83
+msgctxt "shortcut window"
+msgid "In-game"
+msgstr "Ойында"
+
+#: src/shortcuts-dialog.ui:87 src/shortcuts-dialog.ui:93
+msgctxt "shortcut window"
+msgid "Move the keyboard cursor"
+msgstr "Пернетақта курсорын жылжыту"
+
+#: src/shortcuts-dialog.ui:99
+msgctxt "shortcut window"
+msgid "Reveal field"
+msgstr "Өрісті ашу"
+
+#: src/shortcuts-dialog.ui:105
+msgctxt "shortcut window"
+msgid "Toggle field flag state"
+msgstr "Өріс жалаушасы күйін ауыстыру"
+
+#: src/interface.ui:14
+msgid "_Scores"
+msgstr "_Есептер"
+
+#: src/interface.ui:18
+msgid "A_ppearance"
+msgstr "Сырт _көрінісі"
+
+#: src/interface.ui:24
+msgid "_Use Question Flags"
+msgstr "Сұрақ жалаушаларын қол_дану"
+
+#: src/interface.ui:30
+msgid "_Keyboard Shortcuts"
+msgstr "П_ернетақта жарлықтары"
+
+#: src/interface.ui:34
+msgid "_Help"
+msgstr "_Көмек"
+
+#: src/interface.ui:38
+msgid "_About Mines"
+msgstr "Миналар ойыны тур_алы"
+
+#: src/interface.ui:170
+msgid "_Width"
+msgstr "_Ені"
+
+#: src/interface.ui:191
+msgid "_Height"
+msgstr "_Биіктігі"
+
+#: src/interface.ui:212
+msgid "Percent _mines"
+msgstr "_Миналар пайызы"
+
+#: src/interface.ui:235
+msgid "_Cancel"
+msgstr "Ба_с тарту"
+
+#: src/interface.ui:251
+msgid "_Play Game"
+msgstr "_Ойнау"
+
+#: src/interface.ui:366
+msgid "Paused"
+msgstr "Аялдатылған"
+
+#: src/gnome-mines.vala:92
+msgid "Print release version and exit"
+msgstr "Нұсқа ақпаратын шығару және шығу"
+
+#: src/gnome-mines.vala:93
+msgid "Small game"
+msgstr "Кішкентай ойын"
+
+#: src/gnome-mines.vala:94
+msgid "Medium game"
+msgstr "Орташа ойын"
+
+#: src/gnome-mines.vala:95
+msgid "Big game"
+msgstr "Үлкен ойын"
+
+#: src/gnome-mines.vala:214
+msgid "Minefield"
+msgstr "Миналар алаңы"
+
+#. For the scores dialog. First width, then height, then number of mines.
+#: src/gnome-mines.vala:248
+#, c-format
+msgid "%d × %d, %d mine"
+msgid_plural "%d × %d, %d mines"
+msgstr[0] "%d × %d, %d мина"
+
+#: src/gnome-mines.vala:277
+msgid "Custom"
+msgstr "Таңдауыңызша"
+
+#: src/gnome-mines.vala:344
+#, c-format
+msgid "<b>%d</b> mine"
+msgid_plural "<b>%d</b> mines"
+msgstr[0] "<b>%d</b> мина"
+
+#: src/gnome-mines.vala:448
+msgid "Do you want to start a new game?"
+msgstr "Жаңа ойынды бастағыңыз келе ме?"
+
+#: src/gnome-mines.vala:449
+msgid "If you start a new game, your current progress will be lost."
+msgstr "Егер жаңа ойынды бастасаңыз, ағымдағы прогресс жоғалады."
+
+#: src/gnome-mines.vala:450
+msgid "Start New Game"
+msgstr "Жаңа ойын"
+
+#: src/gnome-mines.vala:451
+msgid "Keep Current Game"
+msgstr "Ағымдағы ойынды сақтап қалу"
+
+#: src/gnome-mines.vala:518
+msgid "St_art Over"
+msgstr "Б_асынан бастау"
+
+#: src/gnome-mines.vala:572
+msgid "_Pause"
+msgstr "_Аялдату"
+
+#: src/gnome-mines.vala:577
+msgid "_Resume"
+msgstr "Жа_лғастыру"
+
+#: src/gnome-mines.vala:658
+msgid "Play _Again"
+msgstr "Қ_айта ойнау"
+
+#: src/gnome-mines.vala:743
+msgid "The GNOME Project"
+msgstr "GNOME жобасы"
+
+#: src/gnome-mines.vala:745
+msgid "Clear explosive mines off the board"
+msgstr "Тақтадан жарылыс қаупі бар миналарды тазартыңыз"
+
+#: src/gnome-mines.vala:750
+msgid "translator-credits"
+msgstr "Baurzhan Muftakhidinov <baurthefirst@gmail.com>"
+
+#: src/theme-selector-dialog.vala:108
+msgid "Select Theme"
+msgstr "Теманы таңдау"
+
+#~ msgid "Enable animations"
+#~ msgstr "Анимацияларды іске қосу"
+
+#~ msgid "Set to false to disable theme-defined transition animations"
+#~ msgstr ""
+#~ "Темаға негізделген ауысу анимациясын сөндіру үшін \"false\" етіп орнатыңыз"
+
+#~ msgid "Main game:"
+#~ msgstr "Негізгі ойын:"
+
+#~ msgid "Score:"
+#~ msgstr "Нәтиже:"
+
+#~ msgid "Resizing and SVG support:"
+#~ msgstr "Өлшемін өзгерту және SVG қолдауы:"
+
+#~ msgid "GNOME Mines"
+#~ msgstr "GNOME сапёр ойыны"
+
+#~ msgid "Change _Difficulty"
+#~ msgstr "Қ_иындықты өзгерту"
+
+#~ msgid "_Best Times"
+#~ msgstr "_Ең жақсы ойындар"
+
+#~ msgid "_Play Again"
+#~ msgstr "Қа_йта ойнау"
+
+#~ msgctxt "shortcut window"
+#~ msgid ""
+#~ "Toggle field flag state between normal and flagged (and question, if "
+#~ "enabled)"
+#~ msgstr ""
+#~ "Өріс жалаушасын қалыпты және жалауша арасында ауыстыру (және сұрақ, іске "
+#~ "қосылған болса)"
+
+#~ msgid "_Mines"
+#~ msgstr "_Миналар"
+
+#~ msgid "_New Game"
+#~ msgstr "Ж_аңа ойын"
+
+#~ msgid "_Quit"
+#~ msgstr "_Шығу"
+
+#~ msgid "_Contents"
+#~ msgstr "Құра_масы"
+
+#~ msgid "_Close"
+#~ msgstr "_Жабу"
+
+#~ msgid "New Game"
+#~ msgstr "Жаңа ойын"
+
+#~ msgid "_OK"
+#~ msgstr "_ОК"
+
+#~ msgid "Size:"
+#~ msgstr "Өлшемі:"
+
+#~ msgid "Date"
+#~ msgstr "Күні"
+
+#~ msgid "Time"
+#~ msgstr "Уақыт"
+
+#~ msgid "Use _animations"
+#~ msgstr "_Анимацияларды қолдану"
+
+#~ msgid "Close"
+#~ msgstr "Жабу"
