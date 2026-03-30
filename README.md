@@ -1,35 +1,35 @@
 # GNOME Mines AI 🏆
 
-**GNOME Mines AI** è una versione potenziata di GNOME Mines con funzionalità AI avanzate per il testing e benchmark di modelli linguistici (LLM).
+**GNOME Mines AI** is an enhanced version of GNOME Mines with advanced AI features for testing and benchmarking Large Language Models (LLMs).
 
 ![Screenshot](screenshot.png)
 
-## ✨ Feature
+## ✨ Features
 
 ### 🤖 AI Auto-Play
-- **Multi-Modello**: Supporta Groq (Llama, GPT-OSS, Gemma, Qwen), OpenAI, Ollama (locale)
-- **Ragionamento Visibile**: Vedi il pensiero dell'AI in tempo reale
-- **Formato Universale**: Parsing JSON + line-based per compatibilità massima
+- **Multi-Model**: Supports Groq (Llama, GPT-OSS, Gemma, Qwen), OpenAI, Ollama (local)
+- **Visible Reasoning**: See AI thinking in real-time
+- **Universal Format**: JSON + line-based parsing for maximum compatibility
 
-### 🏆 Modalità Benchmark
-- **Layout Fissi**: Campioni riproducibili per test equi
-- **3 Difficoltà**: 8×8, 16×16, 30×16
-- **Metriche Complete**: Accuracy, token, chiamate API, tempo
+### 🏆 Benchmark Mode
+- **Fixed Layouts**: Reproducible patterns for fair tests
+- **3 Difficulties**: 8×8, 16×16, 30×16
+- **Complete Metrics**: Accuracy, tokens, API calls, time
 
 ### 📊 Leaderboard
-- **Salvataggio Automatico**: Ogni partita viene tracciata
-- **Filtri**: Per modello, difficoltà, provider
-- **Export CSV**: Analisi esterna con Python/Excel
+- **Auto-Save**: Every game is tracked
+- **Filters**: By model, difficulty, provider
+- **CSV Export**: External analysis with Python/Excel
 
-### ⚡ Ottimizzazioni
-- **Prompt Compatto**: -70% token per griglie grandi
-- **Cache Mosse**: Riutilizza risposte per situazioni identiche
-- **Logica Locale**: RULE A/B per mosse ovvie (opzionale)
-- **Batch Moves**: Esegui tutte le mosse in una chiamata
+### ⚡ Optimizations
+- **Compact Prompt**: -70% tokens for large boards
+- **Move Cache**: Reuse responses for identical situations
+- **Local Logic**: RULE A/B for obvious moves (optional)
+- **Batch Moves**: Execute all moves in one call
 
-## 🚀 Installazione
+## 🚀 Installation
 
-### Prerequisiti
+### Prerequisites
 
 ```bash
 # Ubuntu/Debian
@@ -52,7 +52,7 @@ sudo ninja -C build install
 gnome-mines
 ```
 
-### Build Locale (senza installazione)
+### Local Build (without installation)
 
 ```bash
 meson setup build --prefix=$HOME/.local
@@ -61,70 +61,70 @@ ninja -C build install
 ~/.local/bin/gnome-mines
 ```
 
-## 🎯 Utilizzo AI
+## 🎯 AI Usage
 
-### 1. Configura API Key
+### 1. Configure API Key
 
-1. Apri **Menu → AI Settings**
-2. Seleziona **Provider** (Groq consigliato)
-3. Incolla la **API Key** (si salva automaticamente)
-4. Clicca **"Verifica API Key"**
-5. Scegli il **Modello** (es. `llama-3.3-70b-versatile`)
+1. Open **Menu → AI Settings**
+2. Select **Provider** (Groq recommended)
+3. Paste **API Key** (auto-saves)
+4. Click **"Verify API Key"**
+5. Choose **Model** (e.g., `llama-3.3-70b-versatile`)
 
-### 2. Attiva AI
+### 2. Enable AI
 
-1. **Menu → 🤖 AI Auto-Play** (o premi un tasto rapido se configurato)
-2. L'AI inizia a giocare automaticamente
-3. Vedi il **ragionamento** nel pannello laterale
+1. **Menu → 🤖 AI Auto-Play**
+2. AI starts playing automatically
+3. See **reasoning** in side panel
 
-### 3. Modalità Benchmark
+### 3. Benchmark Mode
 
-1. Nella schermata iniziale, clicca **🏆 Benchmark**
-2. Scegli la difficoltà (8×8, 16×16, 30×16)
-3. Attiva AI Auto-Play
-4. Il layout delle mine è **sempre uguale** per test equi
+1. On start screen, click **🏆 Benchmark**
+2. Choose difficulty (8×8, 16×16, 30×16)
+3. Enable AI Auto-Play
+4. Mine layout is **always identical** for fair tests
 
-### 4. Visualizza Benchmark
+### 4. View Benchmarks
 
 1. **Menu → AI Benchmarks**
-2. Filtra per modello/difficoltà
-3. Vedi accuracy, token, tempo
-4. **Export CSV** per analisi esterne
+2. Filter by model/difficulty
+3. See accuracy, tokens, time
+4. **Export CSV** for external analysis
 
-## 📈 Metriche Tracciate
+## 📈 Tracked Metrics
 
-| Metrica | Descrizione |
-|---------|-------------|
-| **Model** | Nome modello AI |
+| Metric | Description |
+|--------|-------------|
+| **Model** | AI model name |
 | **Provider** | Groq, OpenAI, Ollama |
-| **Win/Loss** | Vittoria o sconfitta |
-| **Accuracy** | Mosse certe / Mosse totali |
-| **Token** | Token usati (prompt + response) |
-| **API Calls** | Numero chiamate API |
-| **Duration** | Tempo partita |
-| **Avg Time/Move** | Tempo medio per mossa |
+| **Win/Loss** | Victory or defeat |
+| **Accuracy** | Certain moves / Total moves |
+| **Tokens** | Tokens used (prompt + response) |
+| **API Calls** | Number of API calls |
+| **Duration** | Game time |
+| **Avg Time/Move** | Average time per move |
 
-## 🔧 Configurazione
+## 🔧 Configuration
 
 ### AI Settings
 
-| Opzione | Default | Descrizione |
-|---------|---------|-------------|
-| **Compact Prompt** | OFF | -70% token per griglie grandi |
-| **Local Logic** | OFF | Mosse ovvie senza API (RULE A/B) |
-| **Move Cache** | OFF | Riutilizza risposte identiche |
-| **Batch Moves** | OFF | Esegui tutte le mosse insieme |
-| **Low Temperature** | OFF | AI più deterministica (0.01 vs 0.2) |
+| Option | Default | Description |
+|--------|---------|-------------|
+| **Compact Prompt** | OFF | -70% tokens for large boards |
+| **Local Logic** | OFF | Obvious moves without API (RULE A/B) |
+| **Move Cache** | OFF | Reuse identical responses |
+| **Batch Moves** | OFF | Execute all moves together |
+| **Low Temperature** | OFF | More deterministic AI (0.01 vs 0.2) |
 
-### File di Configurazione
+### Configuration Files
 
 - **Config**: `~/.gnome-mines-ai-config.json`
-- **Benchmark**: `~/.gnome-mines-benchmarks.json`
-- **Export CSV**: Scegli percorso tu
+- **Benchmarks**: `~/.gnome-mines-benchmarks.json`
+- **CSV Export**: Choose path
 
-## 🧠 Modelli Supportati
+## 🧠 Supported Models
 
-### Groq (Consigliato)
+### Groq (Recommended)
 - ✅ `llama-3.3-70b-versatile` (Best for reasoning)
 - ✅ `llama-3.1-8b-instant` (Fast)
 - ✅ `gpt-oss-120b` (Max reasoning)
@@ -136,12 +136,12 @@ ninja -C build install
 - ✅ `gpt-4o`
 - ✅ `gpt-3.5-turbo`
 
-### Locale (Ollama)
+### Local (Ollama)
 - ✅ `llama3.2`
 - ✅ `llama3.1:70b`
-- ✅ Qualsiasi modello Ollama
+- ✅ Any Ollama model
 
-## 📊 Esempio Benchmark
+## 📊 Benchmark Example
 
 ```json
 {
@@ -165,47 +165,47 @@ ninja -C build install
 }
 ```
 
-## 🤝 Contribuire
+## 🤝 Contributing
 
-1. Fork il progetto
-2. Crea un branch (`git checkout -b feature/AmazingFeature`)
+1. Fork the project
+2. Create a branch (`git checkout -b feature/AmazingFeature`)
 3. Commit (`git commit -m 'Add AmazingFeature'`)
 4. Push (`git push origin feature/AmazingFeature`)
-5. Apri una Pull Request
+5. Open a Pull Request
 
-## 📄 Licenza
+## 📄 License
 
-Distribuito sotto licenza **GPLv3+**. Vedi `COPYING` per informazioni.
+Distributed under the **GPLv3+** License. See `COPYING` for more information.
 
-## 🙏 Ringraziamenti
+## 🙏 Acknowledgments
 
-- **GNOME Mines** - Progetto originale
-- **Groq** - API veloce per testing
-- **Meta** - Modelli Llama
-- **Community GNOME** - Supporto
+- **GNOME Mines** - Original project
+- **Groq** - Fast API for testing
+- **Meta** - Llama models
+- **GNOME Community** - Support
 
-## 📞 Contatti
+## 📞 Contact
 
-- **GitHub Issues**: [Segnala bug](https://github.com/YOUR_USERNAME/gnome-mines-ai/issues)
-- **Discussions**: [Discuti feature](https://github.com/YOUR_USERNAME/gnome-mines-ai/discussions)
+- **GitHub Issues**: [Report bugs](https://github.com/GiDanis/gnome-mines-ai/issues)
+- **Discussions**: [Discuss features](https://github.com/GiDanis/gnome-mines-ai/discussions)
 
-## 🏗️ Architettura
+## 🏗️ Architecture
 
 ```
 gnome-mines-ai/
 ├── src/
 │   ├── ai/
-│   │   ├── ai-manager.vala        # Gestione AI gameplay
-│   │   ├── ai-prompt.vala         # Generazione prompt
-│   │   ├── ai-benchmark.vala      # Tracciamento metriche
-│   │   ├── llm-provider.vala      # Provider LLM (Groq, OpenAI, Ollama)
-│   │   ├── api-key-validator.vala # Validazione API key
-│   │   └── ai-debug-logger.vala   # Logging debug
+│   │   ├── ai-manager.vala        # AI gameplay management
+│   │   ├── ai-prompt.vala         # Prompt generation
+│   │   ├── ai-benchmark.vala      # Metric tracking
+│   │   ├── llm-provider.vala      # LLM providers (Groq, OpenAI, Ollama)
+│   │   ├── api-key-validator.vala # API key validation
+│   │   └── ai-debug-logger.vala   # Debug logging
 │   ├── ai-manager.vala
-│   ├── ai-preferences-dialog.vala # UI settings AI
-│   ├── ai-commentary-overlay.vala # Pannello ragionamento
-│   ├── ai-benchmark-dialog.vala   # UI leaderboard
-│   └── ... (altri file originali)
+│   ├── ai-preferences-dialog.vala # AI settings UI
+│   ├── ai-commentary-overlay.vala # Reasoning panel
+│   ├── ai-benchmark-dialog.vala   # Leaderboard UI
+│   └── ... (other original files)
 ├── data/
 ├── build-aux/
 └── README.md
@@ -213,4 +213,4 @@ gnome-mines-ai/
 
 ---
 
-**Buon testing! 🎮🏆**
+**Happy testing! 🎮🏆**

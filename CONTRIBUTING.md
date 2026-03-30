@@ -1,64 +1,64 @@
-# Contribuire a GNOME Mines AI
+# Contributing to GNOME Mines AI
 
-Grazie per il tuo interesse in GNOME Mines AI! Questo documento ti guiderà attraverso il processo di contribuzione.
+Thank you for your interest in GNOME Mines AI! This document will guide you through the contribution process.
 
-## 🚀 Iniziare
+## 🚀 Getting Started
 
-### 1. Fork e Clone
+### 1. Fork and Clone
 
 ```bash
-# Fork su GitHub
-# Poi clona il tuo fork
+# Fork on GitHub
+# Then clone your fork
 git clone https://github.com/YOUR_USERNAME/gnome-mines-ai.git
 cd gnome-mines-ai
 ```
 
-### 2. Setup Ambiente di Sviluppo
+### 2. Setup Development Environment
 
 ```bash
-# Installa dipendenze (Ubuntu/Debian)
+# Install dependencies (Ubuntu/Debian)
 sudo apt install meson valac libsoup-3.0-dev libjson-glib-dev \
     libgtk-4-dev libadwaita-1-dev libgee-0.8-dev librsvg2-dev gettext
 
-# Configura build
+# Configure build
 meson setup build --prefix=/usr
 
-# Compila
+# Build
 ninja -C build
 
-# Esegui (senza installare)
+# Run (without installing)
 ./build/src/gnome-mines
 ```
 
-### 3. Crea un Branch
+### 3. Create a Branch
 
 ```bash
-git checkout -b feature/tua-feature
-# o per bug fix
-git checkout -b fix/tuo-fix
+git checkout -b feature/your-feature
+# or for bug fixes
+git checkout -b fix/your-fix
 ```
 
-## 📝 Linee Guida Codice
+## 📝 Code Guidelines
 
-### Stile Vala
+### Vala Style
 
-- Usa **4 spazi** per indentazione
-- Nomi classi: `PascalCase`
-- Nomi metodi: `snake_case`
-- Nomi variabili: `snake_case`
-- Commenti: solo per logica complessa
+- Use **4 spaces** for indentation
+- Class names: `PascalCase`
+- Method names: `snake_case`
+- Variable names: `snake_case`
+- Comments: only for complex logic
 
 ```vala
-// ✅ Buono
+// ✅ Good
 public class AiManager : Object {
     private Minefield minefield;
     
     public void execute_move(AiMove move) {
-        // Esegui mossa
+        // Execute move
     }
 }
 
-// ❌ Cattivo
+// ❌ Bad
 public class aiManager {
     private Minefield Minefield;
     public void ExecuteMove(AiMove Move) { }
@@ -67,40 +67,40 @@ public class aiManager {
 
 ### Logging
 
-Usa il logger di debug per tracing:
+Use debug logger for tracing:
 
 ```vala
-logger.log("categoria", "Messaggio: %s", valore);
-logger.logf("benchmark", "Token: %d, Accuracy: %.2f", tokens, accuracy);
+logger.log("category", "Message: %s", value);
+logger.logf("benchmark", "Tokens: %d, Accuracy: %.2f", tokens, accuracy);
 ```
 
-### Gestione Errori
+### Error Handling
 
 ```vala
 try {
-    // Codice che può fallire
+    // Code that may fail
 } catch (Error e) {
-    logger.logf("errore", "Descrizione: %s", e.message);
-    commentary_ready("⚠️ Errore: " + e.message, "error");
+    logger.logf("error", "Description: %s", e.message);
+    commentary_ready("⚠️ Error: " + e.message, "error");
 }
 ```
 
 ## 🧪 Testing
 
-### Test Manuali
+### Manual Tests
 
-1. **AI Auto-Play**: Attiva e verifica che giochi correttamente
-2. **Benchmark Mode**: Usa layout fissi e confronta risultati
-3. **Multi-Modello**: Testa con Groq, OpenAI, Ollama
-4. **Persistenza**: Chiudi/riapri e verifica settings salvate
+1. **AI Auto-Play**: Enable and verify it plays correctly
+2. **Benchmark Mode**: Use fixed layouts and compare results
+3. **Multi-Model**: Test with Groq, OpenAI, Ollama
+4. **Persistence**: Close/reopen and verify saved settings
 
-### Test Benchmark
+### Benchmark Tests
 
 ```bash
-# Dopo una partita, controlla i log
+# After a game, check logs
 tail -f /tmp/gnome-mines-ai-debug.log | grep benchmark
 
-# Verifica file benchmark
+# Verify benchmark file
 cat ~/.gnome-mines-benchmarks.json | jq '.runs[-1]'
 ```
 
@@ -110,11 +110,11 @@ cat ~/.gnome-mines-benchmarks.json | jq '.runs[-1]'
 
 ```bash
 git add .
-git commit -m "feat: aggiungi supporto per modello X
+git commit -m "feat: add model X support
 
-- Descrizione dettagliata
-- Cosa cambia
-- Come testare
+- Detailed description
+- What changes
+- How to test
 
 Fixes #123"
 ```
@@ -122,67 +122,67 @@ Fixes #123"
 ### 2. Push
 
 ```bash
-git push origin feature/tua-feature
+git push origin feature/your-feature
 ```
 
-### 3. Apri PR su GitHub
+### 3. Open PR on GitHub
 
-- Titolo chiaro
-- Descrizione cosa cambia
-- Screenshot se UI changes
-- Linka issue correlate
+- Clear title
+- Description of changes
+- Screenshots if UI changes
+- Link related issues
 
-## 🏷️ Tipi di Commit
+## 🏷️ Commit Types
 
-| Tipo | Descrizione |
+| Type | Description |
 |------|-------------|
-| `feat:` | Nuova feature |
+| `feat:` | New feature |
 | `fix:` | Bug fix |
-| `docs:` | Documentazione |
-| `style:` | Formattazione |
+| `docs:` | Documentation |
+| `style:` | Formatting |
 | `refactor:` | Refactoring |
-| `test:` | Test |
+| `test:` | Tests |
 | `chore:` | Build/config |
 
-## 📋 Checklist PR
+## 📋 PR Checklist
 
-- [ ] Codice compilato senza errori
-- [ ] Testato manualmente
-- [ ] Logging aggiunto per debug
-- [ ] Documentazione aggiornata
-- [ ] Nessuna API key nei file
-- [ ] .gitignore aggiornato se necessario
+- [ ] Code compiles without errors
+- [ ] Manually tested
+- [ ] Logging added for debug
+- [ ] Documentation updated
+- [ ] No API keys in files
+- [ ] .gitignore updated if needed
 
-## 💡 Idee per Contributi
+## 💡 Contribution Ideas
 
-### Facili
-- [ ] Traduzioni in altre lingue
-- [ ] Migliorie UI minori
-- [ ] Documentazione
-- [ ] Icone/temi
+### Easy
+- [ ] Translations to other languages
+- [ ] Minor UI improvements
+- [ ] Documentation
+- [ ] Icons/themes
 
-### Medi
-- [ ] Nuovi provider LLM
-- [ ] Statistiche avanzate
-- [ ] Export formati alternativi
+### Medium
+- [ ] New LLM providers
+- [ ] Advanced statistics
+- [ ] Alternative export formats
 - [ ] Keyboard shortcuts
 
-### Difficili
-- [ ] Algoritmi solving avanzati
+### Difficult
+- [ ] Advanced solving algorithms
 - [ ] Pattern recognition
 - [ ] Multi-AI competition
 - [ ] Cloud benchmark sync
 
-## ❓ Bisogno di Aiuto?
+## ❓ Need Help?
 
-- **GitHub Issues**: [Segnala problemi](https://github.com/YOUR_USERNAME/gnome-mines-ai/issues)
-- **GitHub Discussions**: [Chiedi aiuto](https://github.com/YOUR_USERNAME/gnome-mines-ai/discussions)
-- **Email**: tua.email@example.com
+- **GitHub Issues**: [Report problems](https://github.com/GiDanis/gnome-mines-ai/issues)
+- **GitHub Discussions**: [Ask for help](https://github.com/GiDanis/gnome-mines-ai/discussions)
+- **Email**: your.email@example.com
 
-## 📜 Licenza
+## 📜 License
 
-Contribuendo, accetti che il tuo codice sia distribuito sotto **GPLv3+**.
+By contributing, you agree that your code will be distributed under **GPLv3+**.
 
 ---
 
-**Grazie per contribuire! 🎮🏆**
+**Thank you for contributing! 🎮🏆**
