@@ -96,9 +96,10 @@ public class AiManager : Object
         // Load optimization settings
         this.use_local_logic = settings.get_bool("ai-use-local-logic", true);
         this.use_cache = settings.get_bool("ai-use-cache", true);
+        bool ultra_compact = settings.get_bool("ai-ultra-compact-prompt", false);
         this.move_cache = new Gee.HashMap<string, AiMove?>();
 
-        this.prompt_generator = new AiPromptGenerator(minefield);  // Always use optimized prompt
+        this.prompt_generator = new AiPromptGenerator(minefield, ultra_compact);  // Always use optimized prompt
 
         logger.log("AiManager", "Created new AiManager instance");
         logger.logf("AiManager", "Optimizations: local_logic=%s, cache=%s",
@@ -275,7 +276,7 @@ public class AiManager : Object
         if (provider != null)
         {
             provider.response_ready.connect(on_ai_response);
-            provider.batch_response_ready.connect(on_ai_response_batch);
+            provider.batch_response_ready.connect(on_ai_batch_response);
             provider.error_occurred.connect(on_ai_error);
             logger.logf("initialize_provider", "Provider initialized successfully");
         }
@@ -710,6 +711,23 @@ public class AiManager : Object
      */
     private void execute_single_move(AiMove move)
     {
+        // Handle special "think" action - just display the reasoning
+        if (move.action == "think")
+        {
+            if (move.comment != null && move.comment.length > 0)
+            {
+                string display = move.comment;
+                if (display.length > 300)
+                    display = display.substring(0, 300) + "...";
+                commentary_ready("🧠 Pensiero AI: " + display.replace("\n", " "), "think");
+                
+                // Set full reasoning in expanded view
+                if (ai_commentary_overlay != null)
+                    ai_commentary_overlay.set_reasoning(move.comment);
+            }
+            return;
+        }
+        
         // Track this move
         track_move(true, 0);  // Consider all AI moves as "certain"
         
@@ -718,6 +736,7 @@ public class AiManager : Object
             move.y < 0 || move.y >= (int)minefield.height)
         {
             logger.logf("execute_move", "Invalid move: %d,%d out of bounds", move.x, move.y);
+            commentary_ready("⚠️ Mossa non valida: %d,%d".printf(move.x, move.y), "error");
             return;
         }
 
@@ -824,10 +843,18 @@ public class AiManager : Object
     }
 
     /**
+     * Wrapper for batch response (matches signal signature)
+     */
+    private void on_ai_batch_response(string content)
+    {
+        on_ai_response_batch(content, null);
+    }
+    
+    /**
      * Handle batch AI response with multiple moves
      * Supports BOTH JSON and LINE-BASED formats for maximum compatibility
      */
-    public void on_ai_response_batch(string response_content)
+    public void on_ai_response_batch(string response_content, string? thinking_content = null)
     {
         var moves = new Gee.ArrayList<AiMove?>();
         int64 response_start = GLib.get_monotonic_time();
@@ -839,6 +866,23 @@ public class AiManager : Object
             string content = response_content.strip();
             string full_reasoning = "";
             
+            // Display thinking content if provided (from Ollama)
+            if (thinking_content != null && thinking_content.length > 0)
+            {
+                logger.log("on_ai_response_batch", "Showing thinking content from model");
+                
+                // Show thinking in sidebar
+                string display_thinking = thinking_content.strip();
+                if (display_thinking.length > 500)
+                    display_thinking = display_thinking.substring(0, 500) + "...";
+                
+                commentary_ready("🧠 Pensiero AI:\n" + display_thinking.replace("\n", " "), "think");
+                
+                // Set full reasoning in expanded view
+                if (ai_commentary_overlay != null)
+                    ai_commentary_overlay.set_reasoning(thinking_content);
+            }
+
             // Step 1: Extract and display <think>...</think> block
             int think_start = content.index_of("<think>");
             int think_end = content.index_of("</think>");
@@ -846,7 +890,7 @@ public class AiManager : Object
             {
                 full_reasoning = content.substring(think_start + 9, think_end - think_start - 9);
                 logger.log("on_ai_response_batch", "Extracted <think> reasoning block");
-                
+
                 // Display short version in sidebar
                 if (full_reasoning.length > 0)
                 {
@@ -854,21 +898,21 @@ public class AiManager : Object
                     if (display.length > 250)
                         display = display.substring(0, 250) + "...";
                     commentary_ready("🤔 " + display.replace("\n", " "), "think");
-                    
+
                     // Set full reasoning in expanded view
                     if (ai_commentary_overlay != null)
                         ai_commentary_overlay.set_reasoning(full_reasoning);
                 }
-                
+
                 content = content.substring(0, think_start) + content.substring(think_end + 10);
             }
-            
+
             // Step 2: Remove common prefixes
             content = clean_json_prefix(content);
-            
+
             // Step 3: Try JSON parsing first (most models use JSON)
             bool parsed = parse_json_response(content, moves);
-            
+
             if (!parsed || moves.size == 0)
             {
                 // Fallback to line-based parsing
@@ -876,15 +920,15 @@ public class AiManager : Object
                 moves.clear();
                 parse_line_based_response(content, moves);
             }
-            
+
             // Track response tokens (estimate: ~4 chars per token)
             int response_tokens = response_content.length / 4;
             tokens_response += response_tokens;
-            
+
             // Track response time
             int64 response_time_ms = (GLib.get_monotonic_time() - response_start) / 1000;
             logger.logf("benchmark", "Response time: %d ms, tokens: ~%d", response_time_ms, response_tokens);
-            
+
             logger.logf("on_ai_response_batch", "Total moves parsed: %d", moves.size);
         }
         catch (Error e)

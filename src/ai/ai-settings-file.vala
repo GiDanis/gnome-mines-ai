@@ -94,6 +94,7 @@ public class AiSettingsFile : GLib.Object
             config.set_boolean_member("ai-use-cache", false);
             config.set_boolean_member("ai-compact-prompt", false);
             config.set_boolean_member("ai-batch-moves", false);
+            config.set_boolean_member("ai-ultra-compact-prompt", false);  // NEW: ultra compact prompts
             config.set_boolean_member("ai-low-temperature", false);
             loaded = true;
         }

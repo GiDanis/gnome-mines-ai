@@ -195,22 +195,7 @@ public class AiPreferencesDialog : Adw.PreferencesDialog
         var opt_group = new Adw.PreferencesGroup();
         opt_group.set_title(_("AI Optimizations"));
         opt_group.set_description(_("Optional optimizations to reduce API calls. All OFF by default for maximum AI reasoning."));
-        
-        // Compact Prompt toggle (uses relevant cells only)
-        var compact_switch = new Gtk.Switch();
-        compact_switch.set_active(settings.get_bool("ai-compact-prompt", false));
-        compact_switch.set_valign(Gtk.Align.CENTER);
-        compact_switch.notify["active"].connect(() => {
-            settings.set_bool("ai-compact-prompt", compact_switch.get_active());
-            show_save_status(_("Impostazioni salvate!"));
-        });
-        var compact_row = new Adw.ActionRow();
-        compact_row.set_title(_("Compact Prompt"));
-        compact_row.set_subtitle(_("Send only relevant cells. Saves 70% tokens. OFF=full board view"));
-        compact_row.add_suffix(compact_switch);
-        compact_row.set_activatable_widget(compact_switch);
-        opt_group.add(compact_row);
-        
+
         // Local logic toggle
         var local_switch = new Gtk.Switch();
         local_switch.set_active(settings.get_bool("ai-use-local-logic", false));
@@ -256,6 +241,21 @@ public class AiPreferencesDialog : Adw.PreferencesDialog
         batch_row.set_activatable_widget(batch_switch);
         opt_group.add(batch_row);
         
+        // Ultra compact prompt toggle
+        var compact_switch = new Gtk.Switch();
+        compact_switch.set_active(settings.get_bool("ai-ultra-compact-prompt", false));
+        compact_switch.set_valign(Gtk.Align.CENTER);
+        compact_switch.notify["active"].connect(() => {
+            settings.set_bool("ai-ultra-compact-prompt", compact_switch.get_active());
+            show_save_status(_("Impostazioni salvate!"));
+        });
+        var compact_row = new Adw.ActionRow();
+        compact_row.set_title(_("Ultra Compact Prompt"));
+        compact_row.set_subtitle(_("70% shorter prompts. Faster but less context. OFF=full board"));
+        compact_row.add_suffix(compact_switch);
+        compact_row.set_activatable_widget(compact_switch);
+        opt_group.add(compact_row);
+
         // Low temperature toggle
         var temp_switch = new Gtk.Switch();
         temp_switch.set_active(settings.get_bool("ai-low-temperature", false));
@@ -410,10 +410,15 @@ public class AiPreferencesDialog : Adw.PreferencesDialog
                 break;
             case "ollama":
                 endpoint_entry.set_text("http://localhost:11434");
-                model_combo.append("llama3.2", "llama3.2");
-                model_combo.append("llama3.1:70b", "llama3.1:70b");
-                model_combo.append("mistral", "mistral");
-                model_combo.set_active_id("llama3.2");
+                // Fetch available models from Ollama
+                model_combo.remove_all();
+                model_combo.append("", "Caricamento modelli...");
+                model_combo.set_active_id("");
+                model_combo.set_sensitive(false);
+                
+                // Fetch models asynchronously
+                fetch_ollama_models();
+                
                 api_key_entry.set_visible(false);
                 validate_button.set_visible(true);
                 break;
@@ -453,12 +458,128 @@ public class AiPreferencesDialog : Adw.PreferencesDialog
         model_combo.set_active_id("meta-llama/Llama-3.2-3B-Instruct-Turbo");
     }
     
+    /**
+     * Fetch available models from Ollama API
+     */
+    private void fetch_ollama_models()
+    {
+        string endpoint = endpoint_entry.get_text();
+        if (endpoint == "")
+            endpoint = "http://localhost:11434";
+        
+        var session = new Soup.Session();
+        var message = new Soup.Message("GET", "%s/api/tags".printf(endpoint));
+        
+        session.send_and_read_async.begin(message, Priority.DEFAULT, null, (obj, res) => {
+            try
+            {
+                var bytes = session.send_and_read_async.end(res);
+                
+                if (message.status_code == 200)
+                {
+                    var response = (string) bytes.get_data();
+                    var parser = new Json.Parser();
+                    parser.load_from_data(response);
+                    
+                    var root_obj = parser.get_root().get_object();
+                    var models = root_obj.get_array_member("models");
+                    
+                    // Clear loading message
+                    model_combo.remove_all();
+                    model_combo.set_sensitive(true);
+                    
+                    int model_count = 0;
+                    string first_model = "";
+                    
+                    for (uint i = 0; i < models.get_length(); i++)
+                    {
+                        var model_obj = models.get_object_element(i);
+                        var model_name = model_obj.get_string_member("name");
+                        var model_details = model_obj.get_object_member("details");
+                        var family = model_details.get_string_member("family");
+                        var size = model_details.get_string_member("size");
+                        var format = model_details.get_string_member("format");
+                        
+                        // Format size for display
+                        string size_display = "";
+                        if (size.contains("GB"))
+                            size_display = size;
+                        else if (size.contains("MB"))
+                            size_display = size;
+                        else
+                        {
+                            try
+                            {
+                                double size_gb = double.parse(size) / (1024.0 * 1024.0 * 1024.0);
+                                size_display = "%.1f GB".printf(size_gb);
+                            }
+                            catch (Error e)
+                            {
+                                size_display = size;
+                            }
+                        }
+                        
+                        // Add to combo with nice display
+                        string display_name = "%s (%s, %s)".printf(model_name, family, size_display);
+                        model_combo.append(model_name, display_name);
+                        
+                        if (i == 0)
+                            first_model = model_name;
+                        
+                        model_count++;
+                    }
+                    
+                    if (model_count > 0)
+                    {
+                        model_combo.set_active_id(first_model);
+                        show_save_status("🦙 %d modelli Ollama trovati".printf(model_count));
+                    }
+                    else
+                    {
+                        model_combo.append("", "Nessun modello trovato");
+                        model_combo.set_active_id("");
+                        show_validation_status("⚠️ Nessun modello Ollama installato", "warning");
+                    }
+                }
+                else if (message.status_code == 404)
+                {
+                    model_combo.remove_all();
+                    model_combo.append("", "API non disponibile");
+                    model_combo.set_active_id("");
+                    show_validation_status("⚠️ Ollama API non trovata", "error");
+                }
+                else
+                {
+                    model_combo.remove_all();
+                    model_combo.append("", "Errore HTTP %d".printf((int) message.status_code));
+                    model_combo.set_active_id("");
+                    show_validation_status("⚠️ Errore: HTTP %d".printf((int) message.status_code), "error");
+                }
+            }
+            catch (Error e)
+            {
+                model_combo.remove_all();
+                model_combo.append("", "Impossibile connettersi");
+                model_combo.set_active_id("");
+                model_combo.set_sensitive(true);
+                show_validation_status("⚠️ Ollama non raggiungibile: %s".printf(e.message), "error");
+            }
+        });
+    }
+    
     private void on_validate_clicked()
     {
         var provider_type = provider_combo.get_active_id();
         var api_key = api_key_entry.get_text();
         var endpoint = endpoint_entry.get_text();
         var model = model_combo.get_active_id();
+        
+        // For Ollama, check connectivity instead of API key validation
+        if (provider_type == "ollama")
+        {
+            check_ollama_connectivity(endpoint);
+            return;
+        }
         
         // Save current settings before validation
         settings.set_string("ai-provider-type", provider_type ?? "groq");
@@ -522,6 +643,70 @@ public class AiPreferencesDialog : Adw.PreferencesDialog
         });
         
         validator.validate();
+    }
+    
+    /**
+     * Check Ollama connectivity and display status
+     */
+    private void check_ollama_connectivity(string endpoint)
+    {
+        if (endpoint == "")
+            endpoint = "http://localhost:11434";
+        
+        validation_spinner.start();
+        validate_button.set_sensitive(false);
+        
+        var session = new Soup.Session();
+        var message = new Soup.Message("GET", "%s/api/tags".printf(endpoint));
+        
+        session.send_and_read_async.begin(message, Priority.DEFAULT, null, (obj, res) => {
+            try
+            {
+                var bytes = session.send_and_read_async.end(res);
+                
+                if (message.status_code == 200)
+                {
+                    var response = (string) bytes.get_data();
+                    var parser = new Json.Parser();
+                    parser.load_from_data(response);
+                    
+                    var root_obj = parser.get_root().get_object();
+                    var models = root_obj.get_array_member("models");
+                    
+                    int model_count = (int) models.get_length();
+                    
+                    if (model_count > 0)
+                    {
+                        show_validation_status("✓ Ollama raggiungibile! %d modelli disponibili".printf(model_count), "success");
+                        api_key_status_icon.set_from_icon_name("object-select-symbolic");
+                        api_key_status_icon.add_css_class("success-icon");
+                        api_key_status_icon.set_visible(true);
+                        api_key_status_label.set_label(" | %d modelli".printf(model_count));
+                        api_key_status_label.set_visible(true);
+                        
+                        // Refresh model list
+                        fetch_ollama_models();
+                    }
+                    else
+                    {
+                        show_validation_status("⚠️ Ollama raggiungibile ma nessun modello installato", "warning");
+                    }
+                }
+                else
+                {
+                    show_validation_status("✗ Errore: HTTP %d".printf((int) message.status_code), "error");
+                }
+            }
+            catch (Error e)
+            {
+                show_validation_status("✗ Ollama non raggiungibile: %s".printf(e.message), "error");
+            }
+            finally
+            {
+                validation_spinner.stop();
+                validate_button.set_sensitive(true);
+            }
+        });
     }
     
     /**

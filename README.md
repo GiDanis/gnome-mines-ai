@@ -7,7 +7,7 @@
 ## ✨ Features
 
 ### 🤖 AI Auto-Play
-- **Multi-Model**: Supports Groq (Llama, GPT-OSS, Gemma, Qwen), OpenAI, Ollama (local)
+- **Multi-Model**: Supports **Groq** (Llama, GPT-OSS, Gemma, Qwen) and **Ollama** (local models)
 - **Visible Reasoning**: See AI thinking in real-time
 - **Universal Format**: JSON + line-based parsing for maximum compatibility
 
@@ -22,7 +22,7 @@
 - **CSV Export**: External analysis with Python/Excel
 
 ### ⚡ Optimizations
-- **Compact Prompt**: -70% tokens for large boards
+- **Ultra Compact Prompt**: 70% shorter prompts (⚠️ May be unstable with some models)
 - **Move Cache**: Reuse responses for identical situations
 - **Local Logic**: RULE A/B for obvious moves (optional)
 - **Batch Moves**: Execute all moves in one call
@@ -124,22 +124,30 @@ ninja -C build install
 
 ## 🧠 Supported Models
 
-### Groq (Recommended)
-- ✅ `llama-3.3-70b-versatile` (Best for reasoning)
-- ✅ `llama-3.1-8b-instant` (Fast)
-- ✅ `gpt-oss-120b` (Max reasoning)
-- ✅ `gemma2-9b-it` (Google)
-- ✅ `qwen/qwen3-32b`
+### ✅ Tested & Working
 
-### OpenAI
-- ✅ `gpt-4o-mini`
-- ✅ `gpt-4o`
-- ✅ `gpt-3.5-turbo`
+#### **Groq (Cloud - Fast)**
+- ✅ `llama-3.3-70b-versatile` - **Best for reasoning**
+- ✅ `llama-3.1-8b-instant` - Fast and reliable
+- ✅ `gpt-oss-120b` - Maximum reasoning capability
+- ✅ `gemma2-9b-it` - Google model
+- ✅ `qwen/qwen3-32b` - Qwen model
 
-### Local (Ollama)
-- ✅ `llama3.2`
-- ✅ `llama3.1:70b`
-- ✅ Any Ollama model
+#### **Ollama (Local - Free)**
+- ✅ `phi3:mini` (3.8B) - **Best balance for Minesweeper**
+- ✅ `llama3.2:3b` - Stable and reliable
+- ✅ `mistral:7b` - Best quality (slower)
+- ✅ `qwen2.5:3b` - Good alternative
+
+### ⚠️ Known Issues
+
+- **Ultra Compact Prompt**: May be unstable with smaller models (<3B parameters). Use full prompt for better reliability.
+- **Small models** (<1B): Often produce invalid JSON output. Not recommended.
+
+### ❌ Not Tested
+
+- OpenAI API (should work, not tested)
+- Other providers (should work with OpenAI-compatible endpoints)
 
 ## 📊 Benchmark Example
 

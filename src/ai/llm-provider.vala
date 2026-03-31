@@ -211,40 +211,187 @@ public class OllamaProvider : LlmProvider
     {
         try
         {
+            var logger = AiDebugLogger.get_instance();
+            
+            // Ensure endpoint has default value for Ollama
+            string effective_endpoint = endpoint;
+            if (effective_endpoint == null || effective_endpoint == "")
+            {
+                effective_endpoint = "http://localhost:11434";
+            }
+            
+            logger.logf("OllamaProvider", "Starting request_move_async with prompt length: %d", prompt.length);
+            logger.logf("OllamaProvider", "Using endpoint: %s", effective_endpoint);
+            logger.logf("OllamaProvider", "Using model: %s", model);
+            
             var request_obj = new Json.Object();
             request_obj.set_string_member("model", model);
             request_obj.set_string_member("prompt", prompt);
             request_obj.set_boolean_member("stream", false);
             request_obj.set_string_member("format", "json");
-            
+
+            // Debug: verify request_obj is valid
+            logger.logf("OllamaProvider", "Request object created with model=%s, prompt_length=%d", 
+                model, prompt.length);
+
             var generator = new Json.Generator();
             generator.pretty = false;
             var root = new Json.Node(Json.NodeType.OBJECT);
             root.set_object(request_obj);
-            size_t length;
-            string body = generator.to_data(out length);
+            
+            // Use GLib.stringify for reliability
+            string body = Json.to_string(root, false);
+            
+            logger.logf("OllamaProvider", "Generated JSON body length: %d", body.length);
+            logger.logf("OllamaProvider", "Body: %s", body.length > 200 ? body.substring(0, 200) + "..." : body);
+            
+            // Ensure body is not empty
+            if (body.length == 0)
+            {
+                error_occurred("Errore Ollama: JSON body vuoto");
+                return;
+            }
 
             string response;
             try
             {
-                response = yield http_post(
-                    "%s/api/generate".printf(endpoint),
-                    "application/json",
-                    body
-                );
+                logger.logf("OllamaProvider", "Sending HTTP POST to %s/api/generate", effective_endpoint);
+                
+                var session = new Soup.Session();
+                // Increase timeout for slow models (default is 60s)
+                session.set_property("timeout", 300); // 5 minutes
+                
+                var message = new Soup.Message("POST", "%s/api/generate".printf(effective_endpoint));
+                message.request_headers.append("Content-Type", "application/json");
+                // Ollama doesn't need Authorization header
+                
+                // Create request body
+                var body_bytes = new GLib.Bytes(body.data);
+                logger.logf("OllamaProvider", "Request body size: %d bytes", body_bytes.get_size());
+                
+                message.set_request_body_from_bytes("application/json", body_bytes);
+
+                logger.logf("OllamaProvider", "Sending async request (timeout: 300s)...");
+                var bytes = yield session.send_and_read_async(message, Priority.DEFAULT, null);
+                
+                if (bytes == null)
+                {
+                    error_occurred("Errore Ollama: Nessuna risposta dal server");
+                    return;
+                }
+
+                logger.logf("OllamaProvider", "Received response, status: %d", (int) message.status_code);
+
+                if (message.status_code != 200)
+                {
+                    var error_response = (string) bytes.get_data();
+                    error_occurred("Errore Ollama: HTTP %d - %s".printf((int) message.status_code, error_response.length > 200 ? error_response.substring(0, 200) + "..." : error_response));
+                    return;
+                }
+
+                response = (string) bytes.get_data();
+                logger.logf("OllamaProvider", "Response length: %d chars", response.length);
+                logger.logf("OllamaProvider", "Response: %s", response.length > 200 ? response.substring(0, 200) + "..." : response);
             }
             catch (Error e)
             {
+                logger.logf("OllamaProvider", "HTTP error: %s", e.message);
                 error_occurred("Errore Ollama: %s".printf(e.message));
                 return;
             }
-            
+
             var parser = new Json.Parser();
             parser.load_from_data(response);
             var root_obj = parser.get_root().get_object();
-            var content = root_obj.get_string_member("response");
             
-            // Parse the JSON response
+            // Extract thinking/reasoning if available (some Ollama models provide this)
+            string? thinking_content = null;
+            if (root_obj.has_member("thinking"))
+            {
+                thinking_content = root_obj.get_string_member("thinking");
+                logger.logf("OllamaProvider", "Found thinking content: %d chars", thinking_content.length);
+            }
+            else if (root_obj.has_member("thought"))
+            {
+                thinking_content = root_obj.get_string_member("thought");
+                logger.logf("OllamaProvider", "Found thought content: %d chars", thinking_content.length);
+            }
+            
+            // Get response content - some models put JSON in thinking instead of response
+            string content = root_obj.get_string_member("response");
+            
+            // If response is empty but thinking has JSON, use thinking
+            if ((content == null || content.length == 0) && thinking_content != null && thinking_content.length > 0)
+            {
+                logger.log("OllamaProvider", "Response empty, using thinking content as response");
+                content = thinking_content;
+            }
+            
+            // Try to extract JSON from thinking if it's mixed with text
+            if (content != null && content.length > 0)
+            {
+                // Look for JSON pattern in the content
+                int json_start = content.index_of("{");
+                int json_end = content.last_index_of("}");
+                
+                if (json_start >= 0 && json_end > json_start)
+                {
+                    string extracted_json = content.substring(json_start, json_end - json_start + 1);
+                    logger.logf("OllamaProvider", "Extracted JSON from content: %s", extracted_json.length > 100 ? extracted_json.substring(0, 100) + "..." : extracted_json);
+                    content = extracted_json;
+                }
+                
+                // Validate that extracted content looks like valid JSON (starts with { and has action)
+                if (!content.has_prefix("{") || (!content.contains("\"action\"") && !content.contains("'action'")))
+                {
+                    logger.log("OllamaProvider", "Extracted content doesn't look like valid move JSON, trying to fix");
+                    // Try to find action pattern in the text
+                    if (content.contains("click") || content.contains("flag"))
+                    {
+                        // Extract coordinates if present
+                        int x = 0, y = 0;
+                        
+                        // Simple extraction: look for "x":number pattern
+                        var x_pos = content.index_of("\"x\"");
+                        if (x_pos >= 0)
+                        {
+                            var num_start = x_pos + 3;
+                            while (num_start < content.length && (content[num_start] < '0' || content[num_start] > '9'))
+                                num_start++;
+                            if (num_start < content.length)
+                            {
+                                var num_end = num_start;
+                                while (num_end < content.length && content[num_end] >= '0' && content[num_end] <= '9')
+                                    num_end++;
+                                if (num_end > num_start)
+                                    int.try_parse(content.substring(num_start, num_end - num_start), out x);
+                            }
+                        }
+                        
+                        var y_pos = content.index_of("\"y\"");
+                        if (y_pos >= 0)
+                        {
+                            var num_start = y_pos + 3;
+                            while (num_start < content.length && (content[num_start] < '0' || content[num_start] > '9'))
+                                num_start++;
+                            if (num_start < content.length)
+                            {
+                                var num_end = num_start;
+                                while (num_end < content.length && content[num_end] >= '0' && content[num_end] <= '9')
+                                    num_end++;
+                                if (num_end > num_start)
+                                    int.try_parse(content.substring(num_start, num_end - num_start), out y);
+                            }
+                        }
+                        
+                        string action = content.contains("flag") ? "flag" : "click";
+                        content = "{\"action\":\"%s\",\"x\":%d,\"y\":%d}".printf(action, x, y);
+                        logger.logf("OllamaProvider", "Fixed JSON: %s", content);
+                    }
+                }
+            }
+
+            // Parse the JSON response to extract moves
             var move_parser = new Json.Parser();
             try
             {
@@ -255,9 +402,9 @@ public class OllamaProvider : LlmProvider
                 error_occurred("Risposta non valida: %s".printf(e.message));
                 return;
             }
-            
+
             var move_obj = move_parser.get_root().get_object();
-            
+
             var move = AiMove(
                 move_obj.get_string_member("action"),
                 (int) move_obj.get_int_member("x"),
@@ -265,6 +412,30 @@ public class OllamaProvider : LlmProvider
                 move_obj.get_string_member("comment")
             );
             
+            // Validate coordinates are within board bounds
+            if (move.x < 0 || move.x > 50 || move.y < 0 || move.y > 50)
+            {
+                error_occurred("Coordinate non valide: x=%d, y=%d (fuori dalla griglia)".printf(move.x, move.y));
+                return;
+            }
+
+            // If we have thinking content, display it in the panel
+            if (thinking_content != null && thinking_content.length > 0)
+            {
+                // Extract just the JSON part for display (remove analysis text)
+                string display_thinking = thinking_content;
+                int json_start = thinking_content.index_of("{");
+                int json_end = thinking_content.last_index_of("}");
+                if (json_start >= 0 && json_end > json_start)
+                {
+                    display_thinking = thinking_content.substring(json_start, json_end - json_start + 1);
+                }
+                
+                // Emit thinking as a special move for display
+                var thinking_move = AiMove("think", 0, 0, display_thinking);
+                response_ready(thinking_move);
+            }
+
             response_ready(move);
         }
         catch (Error e)
